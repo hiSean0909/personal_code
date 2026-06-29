@@ -151,11 +151,8 @@ def run_web():
         return ask_agent(message)
 
     with gr.Blocks(css="""
-        .gradio-container { height: 100vh !important; display: flex; flex-direction: column; }
-        .gradio-container > .main { flex: 1; display: flex; flex-direction: column; }
-        .chatbot-container { flex: 1; min-height: 200px; }
         #input-box textarea { background-color: #e8f4fd !important; }
-    """, fill_height=True) as demo:
+    """) as demo:
         gr.ChatInterface(
             fn=respond,
             chatbot=gr.Chatbot(elem_classes="chatbot-container"),
@@ -177,11 +174,40 @@ def run_web():
 # ==========================================
 # 6. 启动程序
 # ==========================================
+def timed_input(prompt, timeout=3, default="1"):
+    """带超时的输入函数，超时自动返回默认值"""
+    import msvcrt
+    import time
+
+    print(prompt, end="", flush=True)
+    start = time.time()
+    chars = []
+
+    while time.time() - start < timeout:
+        if msvcrt.kbhit():
+            ch = msvcrt.getwche()
+            if ch == "\r":  # 回车
+                print()
+                return "".join(chars)
+            elif ch == "\b":  # 退格
+                if chars:
+                    chars.pop()
+                    print(" \b", end="", flush=True)  # 擦除字符
+            else:
+                chars.append(ch)
+        else:
+            time.sleep(0.05)
+
+    # 超时，显示默认选择
+    print(f"\n⏱ 超时，自动选择默认模式（{default}）")
+    return default
+
+
 if __name__ == "__main__":
     print("请选择启动模式：")
     print("  1. Web 界面（浏览器）")
     print("  2. 命令行模式")
-    choice = input("输入 1 或 2，回车确认: ").strip()
+    choice = timed_input("输入 1 或 2，回车确认（3秒无操作自动选 1）: ").strip()
 
     if choice == "2":
         run_cli()
