@@ -1,0 +1,17 @@
+# Python 虚拟环境
+.venv/
+venv/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+
+# 环境变量
+.env
+*.env.local
