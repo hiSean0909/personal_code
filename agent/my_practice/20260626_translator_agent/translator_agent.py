@@ -151,18 +151,15 @@ def run_web():
         return ask_agent(message)
 
     with gr.Blocks(css="""
-        #input-box textarea {
-            background-color: #e8f4fd !important;
-        }
-        .chatbot-container {
-            height: calc(100vh - 320px) !important;
-            min-height: 200px;
-        }
-    """) as demo:
+        .gradio-container { height: 100vh !important; display: flex; flex-direction: column; }
+        .gradio-container > .main { flex: 1; display: flex; flex-direction: column; }
+        .chatbot-container { flex: 1; min-height: 200px; }
+        #input-box textarea { background-color: #e8f4fd !important; }
+    """, fill_height=True) as demo:
         gr.ChatInterface(
             fn=respond,
             chatbot=gr.Chatbot(elem_classes="chatbot-container"),
-            textbox=gr.Textbox(elem_id="input-box", placeholder="输入英文单词、短语或中文句子...", lines=3),
+            textbox=gr.Textbox(elem_id="input-box", placeholder="输入英文单词、短语或中文句子...", lines=1),
             title="📖 翻译助手 Translator Agent",
             description=(
                 "输入**英文单词**、**短语**、**中文词语**或**中文句子**，"
