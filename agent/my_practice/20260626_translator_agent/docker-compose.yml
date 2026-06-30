@@ -1,0 +1,41 @@
+# ============================================================
+# 翻译助手 Translator Agent — docker-compose.yml
+# 使用方法：
+#   1. 同目录创建 .env，写入 DEEPSEEK_API_KEY=sk-xxx（必填）
+#   2. 启动：docker compose up -d --build
+#   3. 看日志：docker compose logs -f
+#   4. 停止：docker compose down
+# ============================================================
+
+services:
+  translator-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: translator-agent:latest
+    container_name: translator-agent
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-7860}:7860"
+    environment:
+      TZ: Asia/Shanghai
+      RUN_MODE: WEB
+      WEB_HOST: "0.0.0.0"
+      WEB_PORT: "7860"
+      # ===== DeepSeek 必填 =====
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY}"
+      DEEPSEEK_BASE_URL: "${DEEPSEEK_BASE_URL:-https://api.deepseek.com}"
+      DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-deepseek-v4-flash}"
+      # ===== 反代子路径（如 /translator），不使用留空 =====
+      WEB_ROOT_PATH: "${WEB_ROOT_PATH:-}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:7860/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"

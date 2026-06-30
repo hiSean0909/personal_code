@@ -8,49 +8,46 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # 1. 配置与初始化
 # ==========================================
 
-# ---- 方案一：DeepSeek（优先使用） ----
-# API Key 只从环境变量读取，不硬编码，防止泄露
+# ---- 运行模式：CLI / WEB，云端 Docker 模式强制 WEB ----
+RUN_MODE = os.getenv("RUN_MODE", "").upper()
+
+# ---- 唯一 LLM 后端：DeepSeek（云端 API） ----
+# 所有参数都通过环境变量注入，代码中不保留任何硬编码
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-DEEPSEEK_MODEL = "deepseek-v4-flash"
-
-# ---- 方案二：Ollama 本地模型（降级方案） ----
-# Ollama 是本地部署的开源大模型，完全离线运行、不需要联网
-# 需要先启动 Ollama 服务（命令行运行: ollama serve）
-OLLAMA_BASE_URL = "http://localhost:11434/v1"
-OLLAMA_API_KEY = "ollama"
-OLLAMA_MODEL = "qwen2.5:7b"
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 
 
-# ---- 自动选择：先测试 DeepSeek，失败则降级到 Ollama ----
 def init_client():
     """
-    先尝试连接 DeepSeek。
-    如果 DeepSeek 通（网络正常、API Key 有效），就返回 DeepSeek 客户端；
-    如果 DeepSeek 不通，自动降级到本地 Ollama 模型。
+    初始化 DeepSeek 客户端并做一次连通性探测。
+    失败直接抛出，避免把一个不可用的 client 传到后面，让请求在每次调用时才报错。
     """
+    if not DEEPSEEK_API_KEY:
+        raise RuntimeError(
+            "未设置 DEEPSEEK_API_KEY 环境变量。\n"
+            "  - 本地开发：先在 PowerShell 执行  $env:DEEPSEEK_API_KEY='sk-xxx'\n"
+            "  - Docker 部署：在 .env 文件里填上 DEEPSEEK_API_KEY=sk-xxx 后重启容器"
+        )
+
     print("🔄 正在测试 DeepSeek 连接...")
     try:
         test_client = OpenAI(
             base_url=DEEPSEEK_BASE_URL,
-            api_key=DEEPSEEK_API_KEY
+            api_key=DEEPSEEK_API_KEY,
+            timeout=15,
         )
-        # 发一个极简请求测试连通性（只返回 1 个 token，省流量）
         test_client.chat.completions.create(
             model=DEEPSEEK_MODEL,
             messages=[{"role": "user", "content": "hi"}],
-            max_tokens=1
+            max_tokens=1,
+            timeout=15,
         )
-        print(f"✅ DeepSeek 连接成功，使用模型: {DEEPSEEK_MODEL}")
-        return test_client, DEEPSEEK_MODEL
     except Exception as e:
-        print(f"❌ DeepSeek 连接失败: {e}")
-        print(f"🔄 降级到 Ollama 本地模型: {OLLAMA_MODEL}")
-        ollama_client = OpenAI(
-            base_url=OLLAMA_BASE_URL,
-            api_key=OLLAMA_API_KEY
-        )
-        return ollama_client, OLLAMA_MODEL
+        raise RuntimeError(f"DeepSeek 连接失败: {e}\n  请检查：DEEPSEEK_API_KEY 是否正确 / 服务器能否访问 {DEEPSEEK_BASE_URL}") from e
+
+    print(f"✅ DeepSeek 连接成功，使用模型: {DEEPSEEK_MODEL}")
+    return test_client, DEEPSEEK_MODEL
 
 
 # 程序启动时执行初始化，确定最终使用哪个模型
@@ -150,9 +147,7 @@ def run_web():
     def respond(message, history):
         return ask_agent(message)
 
-    with gr.Blocks(css="""
-        #input-box textarea { background-color: #e8f4fd !important; }
-    """) as demo:
+    with gr.Blocks() as demo:
         gr.ChatInterface(
             fn=respond,
             chatbot=gr.Chatbot(elem_classes="chatbot-container"),
@@ -164,10 +159,20 @@ def run_web():
             ),
         )
 
+    # 云端部署时监听所有网卡；本地开发默认只监听 127.0.0.1（用 WEB_HOST 环境变量覆盖）
+    server_name = os.getenv("WEB_HOST", "0.0.0.0" if RUN_MODE else "127.0.0.1")
+    server_port = int(os.getenv("WEB_PORT", "7860"))
+    web_share = os.getenv("WEB_SHARE", "false").lower() == "true"
+    web_root_path = os.getenv("WEB_ROOT_PATH", "") or None  # 反代子路径时使用，如 "/translator"
+
     demo.launch(
-        server_name="127.0.0.1",  # 只监听本地，不暴露到局域网
-        server_port=7860,          # Gradio 默认端口
-        share=False,               # 不生成公网链接
+        server_name=server_name,
+        server_port=server_port,
+        share=web_share,
+        root_path=web_root_path,
+        css="""
+        #input-box textarea { background-color: #e8f4fd !important; }
+        """,
     )
 
 
@@ -204,12 +209,18 @@ def timed_input(prompt, timeout=3, default="1"):
 
 
 if __name__ == "__main__":
-    print("请选择启动模式：")
-    print("  1. Web 界面（浏览器）")
-    print("  2. 命令行模式")
-    choice = timed_input("输入 1 或 2，回车确认（3秒无操作自动选 1）: ").strip()
-
-    if choice == "2":
+    # 云端 / Docker 场景：设置 RUN_MODE=WEB 或 RUN_MODE=CLI，跳过交互式选择（容器没有 TTY）
+    if RUN_MODE == "CLI":
         run_cli()
-    else:
+    elif RUN_MODE == "WEB":
         run_web()
+    else:
+        print("请选择启动模式：")
+        print("  1. Web 界面（浏览器）")
+        print("  2. 命令行模式")
+        choice = timed_input("输入 1 或 2，回车确认（3秒无操作自动选 1）: ").strip()
+
+        if choice == "2":
+            run_cli()
+        else:
+            run_web()
