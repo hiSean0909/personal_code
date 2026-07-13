@@ -28,6 +28,8 @@ services:
       DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-deepseek-v4-flash}"
       # ===== 反代子路径（如 /translator），不使用留空 =====
       WEB_ROOT_PATH: "${WEB_ROOT_PATH:-}"
+    volumes:
+      - ./translator_agent_prompts.md:/app/translator_agent_prompts.md
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:7860/"]
       interval: 30s
