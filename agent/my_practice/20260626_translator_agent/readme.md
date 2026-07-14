@@ -22,33 +22,67 @@
 
 ---
 
-## 本地运行
+## 本地运行（本地电脑 · PowerShell）
 
-```bash
-# 1. 设置 API Key
-set DEEPSEEK_API_KEY=sk-xxxxxxxx
+设置 API Key：
 
-# 2. 安装依赖
+```powershell
+$env:DEEPSEEK_API_KEY="sk-xxxxxxxx"
+```
+
+安装依赖：
+
+```powershell
 pip install -r requirements.txt
+```
 
-# 3. 启动（3 秒内可选择 CLI 或 Web，超时默认 Web）
+启动（3 秒内可选择 CLI 或 Web，超时默认 Web）：
+
+```powershell
 python translator_agent.py
 ```
 
 ---
 
-
 ## 运维速查
 
-### 日常操作
+### 日常操作（云端服务器 · SSH 终端）
 
-| 场景             | 命令                                                   |
-| ---------------- | ------------------------------------------------------ |
-| 看服务状态       | `docker ps`                                          |
-| 看实时日志       | `docker logs translator-agent --tail 50`             |
-| 重启（不改代码） | `cd /opt/translator-agent && docker compose restart` |
-| 停服务           | `cd /opt/translator-agent && docker compose down`    |
-| 重新启动         | `cd /opt/translator-agent && docker compose up -d`   |
+先 cd 到项目目录：
+
+```bash
+cd /opt/translator-agent
+```
+
+看服务状态：
+
+```bash
+docker ps
+```
+
+看实时日志：
+
+```bash
+docker logs translator-agent --tail 50
+```
+
+重启（不改代码）：
+
+```bash
+docker compose restart
+```
+
+停服务：
+
+```bash
+docker compose down
+```
+
+重新启动：
+
+```bash
+docker compose up -d
+```
 
 ### 更新代码
 
@@ -56,48 +90,126 @@ python translator_agent.py
 
 改完 `.py` / `.md` / `Dockerfile` / `requirements.txt` 后：
 
+**本地电脑 · PowerShell** — 先 cd 到项目目录：
+
 ```powershell
-# 本地 PowerShell
 cd d:\personal\git\personal_code\agent\my_practice\20260626_translator_agent
-Compress-Archive -Path translator_agent.py, translator_agent_prompts.md, requirements.txt, Dockerfile, docker-compose.yml, .env.example, deploy.sh -DestinationPath translator-agent-deploy.zip -Force
-scp -P 22 -o "StrictHostKeyChecking=accept-new" translator-agent-deploy.zip ubuntu@<服务器公网IP>:/tmp/
 ```
 
+打包所有文件为 zip：
+
+```powershell
+Compress-Archive -Path translator_agent.py, translator_agent_prompts.md, requirements.txt, Dockerfile, docker-compose.yml, .env.example, deploy.sh -DestinationPath translator-agent-deploy.zip -Force
+```
+
+上传 zip 到服务器：
+
+```powershell
+scp -P 22 -o "StrictHostKeyChecking=accept-new" translator-agent-deploy.zip ubuntu@111.229.133.8:/tmp/
+```
+
+**云端服务器 · SSH 终端** — 先 cd 到项目目录：
+
 ```bash
-# SSH 终端
 cd /opt/translator-agent
+```
+
+解压覆盖文件：
+
+```bash
 unzip -o /tmp/translator-agent-deploy.zip
+```
+
+重新构建并启动容器：
+
+```bash
 docker compose up -d --build
 ```
 
 > `.env`（含 API Key）不在 zip 白名单中，不会被覆盖。
 
-#### 方案二：仅修改 prompts 文件（最常用，推荐）
+#### 方案二：服务器端直接编辑（最常用）
 
 如果**只修改 `translator_agent_prompts.md`**（最频繁的操作），无需走完整打包部署流程。前提是服务器端 `docker-compose.yml` 已配置 volume 挂载（将 prompts 文件挂入容器而非打包进镜像），只需两步：
 
-```bash
-# SSH 终端 — 直接编辑 prompts 文件
-cd /opt/translator-agent
-nano translator_agent_prompts.md
+**云端服务器 · SSH 终端** — 先 cd 到项目目录：
 
-# 重启容器即可生效（无需 --build）
+```bash
+cd /opt/translator-agent
+```
+
+直接编辑 prompts 文件：
+
+```bash
+nano translator_agent_prompts.md
+```
+
+重启容器即可生效（无需 --build）：
+
+```bash
 docker compose restart
 ```
 
 > 原理：`docker-compose.yml` 中通过 `volumes` 将宿主机上的 `translator_agent_prompts.md` 挂载到容器内，容器启动时读取的是挂载版本而非镜像中的副本，因此修改后只需重启容器。
 
-### 清理
+#### 方案三：本地编辑 + scp 上传（Windows 推荐）
 
-| 场景                              | 命令                        |
-| --------------------------------- | --------------------------- |
-| 清理悬空旧镜像（频繁 rebuild 后） | `docker image prune -f`   |
-| 清理所有构建缓存                  | `docker builder prune -f` |
+如果在本地修改 `translator_agent_prompts.md`，然后上传覆盖服务器文件：
+
+**本地电脑 · PowerShell** — 先 cd 到项目目录：
+
+```powershell
+cd d:\personal\git\personal_code\agent\my_practice\20260626_translator_agent
+```
+
+上传 prompts 文件到服务器：
+
+```powershell
+scp -P 22 -o "StrictHostKeyChecking=accept-new" translator_agent_prompts.md ubuntu@111.229.133.8:/opt/translator-agent/
+```
+
+**云端服务器 · SSH 终端** — 先 cd 到项目目录：
+
+```bash
+cd /opt/translator-agent
+```
+
+重启容器生效（无需 --build）：
+
+```bash
+docker compose restart
+```
+
+### 清理（云端服务器 · SSH 终端）
+
+清理悬空旧镜像（频繁 rebuild 后）：
+
+```bash
+docker image prune -f
+```
+
+清理所有构建缓存：
+
+```bash
+docker builder prune -f
+```
 
 ### 常见问题
 
-| 问题              | 排查                                                                        |
-| ----------------- | --------------------------------------------------------------------------- |
-| 浏览器访问超时    | 检查云服务器防火墙是否放行 7860 TCP                                         |
-| 容器启动后秒退    | `docker logs translator-agent` 查错误，通常是 API Key 未设或网络不通      |
-| DeepSeek 连接失败 | 检查`.env` 中 `DEEPSEEK_API_KEY` 格式（`sk-` 开头），以及额度是否充足 |
+**浏览器访问超时**
+
+检查云服务器防火墙是否放行 7860 TCP。
+
+**容器启动后秒退**
+
+查看日志定位错误：
+
+```bash
+docker logs translator-agent
+```
+
+通常是 API Key 未设或网络不通。
+
+**DeepSeek 连接失败**
+
+检查 `.env` 中 `DEEPSEEK_API_KEY` 格式（`sk-` 开头），以及额度是否充足。
