@@ -7,6 +7,7 @@
 | 项目 | 说明 |
 |---|---|
 | `20260626_translator_agent/` | 翻译助手 Agent（环境变量 + 自动降级 + CLI/Web 双模式） |
+| `20260723_idiom_chain_agent/` | 成语接龙网页游戏（DeepSeek LLM 接龙 + 宽松拼音匹配 + Gradio Web） |
 
 ## 原则
 
