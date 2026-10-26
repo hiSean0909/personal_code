@@ -105,7 +105,7 @@ Compress-Archive -Path translator_agent.py, translator_agent_prompts.md, require
 上传 zip 到服务器：
 
 ```powershell
-scp -P 22 -o "StrictHostKeyChecking=accept-new" translator-agent-deploy.zip ubuntu@111.229.133.8:/tmp/
+scp -P 22 -o "StrictHostKeyChecking=accept-new" translator-agent-deploy.zip ubuntu@122.51.135.229:/tmp/
 ```
 
 **云端服务器 · SSH 终端** — 先 cd 到项目目录：
@@ -165,7 +165,7 @@ cd d:\personal\git\personal_code\agent\my_practice\20260626_translator_agent
 上传 prompts 文件到服务器：
 
 ```powershell
-scp -P 22 -o "StrictHostKeyChecking=accept-new" translator_agent_prompts.md ubuntu@111.229.133.8:/opt/translator-agent/
+scp -P 22 -o "StrictHostKeyChecking=accept-new" translator_agent_prompts.md ubuntu@122.51.135.229:/opt/translator-agent/
 ```
 
 **云端服务器 · SSH 终端** — 先 cd 到项目目录：

@@ -8,6 +8,7 @@
 |---|---|
 | `20260626_translator_agent/` | 翻译助手 Agent（环境变量 + 自动降级 + CLI/Web 双模式） |
 | `20260723_idiom_chain_agent/` | 成语接龙网页游戏（DeepSeek LLM 接龙 + 宽松拼音匹配 + Gradio Web） |
+| `20261013_personal_assistant/` | 本地个人助手（多轮上下文 + 流式输出 + 提示词即产品的 AI Native 设计） |
 
 ## 原则
 

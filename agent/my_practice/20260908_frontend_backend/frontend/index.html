@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Square Calculator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="calculator">
+      <h1>Square Calculator</h1>
+      <p>Enter a number and the cloud API will calculate its square.</p>
+
+      <form id="square-form">
+        <label for="number-input">Value x</label>
+        <input id="number-input" name="x" type="text" autofocus />
+        <button type="submit">Calculate x²</button>
+      </form>
+
+      <p id="result" role="status" aria-live="polite">Enter a number to begin.</p>
+
+      <section class="interaction" aria-labelledby="interaction-title">
+        <h2 id="interaction-title">API Interaction Details</h2>
+        <pre id="interaction-data" aria-live="polite">No request has been sent yet.</pre>
+      </section>
+    </main>
+
+    <script src="app.js?v=2"></script>
+  </body>
+</html>

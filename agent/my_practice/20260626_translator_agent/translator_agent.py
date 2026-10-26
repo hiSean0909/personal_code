@@ -1,5 +1,6 @@
 import os
 from openai import OpenAI
+import httpx
 
 # 获取脚本所在目录，后续所有文件路径都基于此目录，避免运行目录不同导致找不到文件
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,19 +36,24 @@ def init_client():
         test_client = OpenAI(
             base_url=DEEPSEEK_BASE_URL,
             api_key=DEEPSEEK_API_KEY,
-            timeout=15,
+            timeout=httpx.Timeout(60.0, connect=15.0),
         )
         test_client.chat.completions.create(
             model=DEEPSEEK_MODEL,
             messages=[{"role": "user", "content": "hi"}],
             max_tokens=1,
-            timeout=15,
+            timeout=30,
         )
     except Exception as e:
         raise RuntimeError(f"DeepSeek 连接失败: {e}\n  请检查：DEEPSEEK_API_KEY 是否正确 / 服务器能否访问 {DEEPSEEK_BASE_URL}") from e
 
     print(f"✅ DeepSeek 连接成功，使用模型: {DEEPSEEK_MODEL}")
-    return test_client, DEEPSEEK_MODEL
+    client = OpenAI(
+        base_url=DEEPSEEK_BASE_URL,
+        api_key=DEEPSEEK_API_KEY,
+        timeout=httpx.Timeout(120.0, connect=15.0),
+    )
+    return client, DEEPSEEK_MODEL
 
 
 # 程序启动时执行初始化，确定最终使用哪个模型
@@ -99,7 +105,8 @@ def ask_agent(user_input: str) -> str:
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_input}
-            ]
+            ],
+            timeout=120,
         )
         return response.choices[0].message.content
     except Exception as e:
