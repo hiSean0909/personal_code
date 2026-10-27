@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+  <title>电脑概览 · 磁盘与网速</title>
+</head>
+<body>
+  <main class="dashboard">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow"><span class="brand-mark" aria-hidden="true"></span>我的电脑 / 实时概览</p>
+        <h1>电脑概览</h1>
+        <p class="subtitle">查看磁盘占用与当前上传、下载速率。</p>
+      </div>
+      <div class="header-actions">
+        <span class="local-badge"><span aria-hidden="true"></span>本机实时数据</span>
+        <button id="refresh" type="button">立即刷新 <span aria-hidden="true">↻</span></button>
+      </div>
+    </header>
+
+    <div class="section-heading">
+      <h2>实时网速</h2>
+      <span>每秒更新</span>
+    </div>
+    <section class="network-grid" aria-label="实时上传与下载速率">
+      <article class="network-card download-card">
+        <div class="network-label"><span class="network-icon" aria-hidden="true">↓</span><h3>下载</h3><span>接收数据</span></div>
+        <strong id="download-speed" class="network-speed">—</strong>
+      </article>
+      <article class="network-card upload-card">
+        <div class="network-label"><span class="network-icon" aria-hidden="true">↑</span><h3>上传</h3><span>发送数据</span></div>
+        <strong id="upload-speed" class="network-speed">—</strong>
+      </article>
+    </section>
+    <div class="network-caption">
+      <p id="network-status" role="status">正在获取网速…</p>
+      <p>本机网卡合计，含局域网及虚拟网卡流量</p>
+    </div>
+
+    <section class="overview" aria-label="磁盘总览">
+      <div class="overview-heading">
+        <span class="section-label">存储总览</span>
+        <span id="drive-count">正在读取磁盘…</span>
+      </div>
+      <div class="overview-stats">
+        <div><p>总容量</p><strong id="total">—</strong></div>
+        <div><p>已用空间</p><strong id="used">—</strong></div>
+        <div><p>剩余空间</p><strong id="free">—</strong></div>
+      </div>
+      <p class="overview-note">汇总当前可读取的 C 盘与 D 盘</p>
+    </section>
+
+    <div class="section-heading">
+      <h2>磁盘详情</h2>
+      <span>容量单位：GiB / TiB</span>
+    </div>
+    <section id="disks" class="disk-grid" aria-label="C 盘与 D 盘详情"></section>
+
+    <footer class="page-footer">
+      <p id="status" role="status" aria-live="polite">正在获取存储信息…</p>
+      <p>磁盘每 5 秒刷新 <span aria-hidden="true">·</span> 数据仅在本机读取</p>
+    </footer>
+  </main>
+</body>
+</html>
