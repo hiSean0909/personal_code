@@ -1,6 +1,7 @@
-"""A minimal local Web/CLI translator using the reference project's prompt."""
+"""A Web/CLI translator for local use and container deployment."""
 
 import argparse
+import os
 from pathlib import Path
 
 from dotenv import dotenv_values
@@ -12,14 +13,17 @@ CREDENTIAL_FILE = Path(r"D:\personal\codex\.secrets\llm.env")
 
 
 def create_translator():
-    config = dotenv_values(CREDENTIAL_FILE)
+    config = {}
+    if os.name == "nt":
+        config.update(dotenv_values(CREDENTIAL_FILE))
+    config.update(os.environ)
     provider = config.get("LLM_DEFAULT")
     if not provider:
-        raise RuntimeError(f"请在 {CREDENTIAL_FILE} 中配置 LLM_DEFAULT。")
+        raise RuntimeError("缺少模型配置：LLM_DEFAULT。请检查运行环境或集中配置文件。")
     keys = {name: f"{provider}_{name}" for name in ("API_KEY", "BASE_URL", "DEFAULT_MODEL")}
     missing = [key for key in keys.values() if not config.get(key)]
     if missing:
-        raise RuntimeError(f"请在 {CREDENTIAL_FILE} 中配置：{', '.join(missing)}。")
+        raise RuntimeError(f"缺少模型配置：{', '.join(missing)}。请检查运行环境或集中配置文件。")
 
     client = OpenAI(
         api_key=config[keys["API_KEY"]],
@@ -44,7 +48,7 @@ def create_translator():
             )
             return response.choices[0].message.content or "模型返回了空内容，请重试。"
         except AuthenticationError:
-            return f"API 授权失败，请检查集中凭据文件中的 {keys['API_KEY']}。"
+            return f"API 授权失败，请检查 {keys['API_KEY']} 配置。"
         except APIConnectionError:
             return "连接模型服务失败或请求超时，请检查网络后重试。"
         except APIStatusError as error:
@@ -79,11 +83,15 @@ def main():
 
         gr.ChatInterface(
             fn=translate,
-            title="翻译助手 · Local Translator",
+            title="翻译助手 · Translator",
             description="输入英文单词、短语、中文词语或句子。每次独立解析，不携带历史对话。",
             textbox=gr.Textbox(placeholder="输入需要翻译或解析的内容…", lines=1),
             analytics_enabled=False,
-        ).launch(server_name="127.0.0.1", server_port=7860, share=False)
+        ).launch(
+            server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
+            server_port=7860,
+            share=False,
+        )
 
 
 if __name__ == "__main__":

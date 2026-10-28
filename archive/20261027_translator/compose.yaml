@@ -1,0 +1,23 @@
+name: translator
+
+services:
+  translator:
+    image: translator:20261028-1
+    platform: linux/amd64
+    restart: unless-stopped
+    env_file:
+      - /home/ubuntu/.config/llm.env
+    ports:
+      - "0.0.0.0:7861:7860"
+    volumes:
+      - type: bind
+        source: ./translator_agent_prompts.md
+        target: /app/translator_agent_prompts.md
+        read_only: true
+        bind:
+          create_host_path: false
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

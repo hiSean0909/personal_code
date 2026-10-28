@@ -6,7 +6,6 @@
 
 | 目录/文件 | 说明 |
 |---|---|
-| `agent/` | Agent 开发学习与实践（详见 [agent/readme.md](agent/readme.md)） |
 | `doing/` | 开发中项目 |
 | `archive/` | 归档项目 |
 

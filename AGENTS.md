@@ -1,14 +1,57 @@
 # Agent Guide
 
+## Input Mapping
+
+- Apply these mappings when the entire user input is the standalone keyword
+- `start` means `inspect this project briefly`
+- `end` means synchronize the current project to Git: inspect its changes, commit the relevant project changes, and push them to the remote repository
+
+## Local Development Environment
+
+Environment snapshot verified on 2026-10-28. Check the actual environment before compatibility or installation work and prefer reusing existing tools.
+
+| Component | Configuration |
+| --- | --- |
+| Operating system | Windows 10 Pro 22H2, build 19045.6466, x64 |
+| Default shell | PowerShell 7.6.4 |
+| Git | 2.54.0.windows.1 |
+| WSL | Software version 3.0.3.0, using the WSL 2 architecture |
+| Docker Desktop | 4.97.0, using the WSL 2 backend |
+| Docker Engine | 29.9.2 |
+| Docker Compose | v5.6.1 |
+| Docker installation directory | `D:\software\Docker` |
+| Docker data directory | `D:\Data\DockerData` |
+| Cloud container image target platform | `linux/amd64` |
+
 ## Project Structure
 
 - Name all project directories, including placeholder directories, using `YYYYMMDD_<name>`
 - Each Python project must maintain its own `.venv/` directory and `requirements.txt` file
 - Each project must include a `README.md` describing its purpose, setup, and startup steps
 
+## Application Access
+
+- Develop projects without application login or authentication by default; add login or authentication when explicitly requested
+- For user-facing Web services deployed to the cloud, provide direct access through the server's public IP address or domain by default and allow all source IP addresses without IP allowlists or blocklists
+- Bind the deployed service to the required public-facing interface and permit its required service ports through the host and cloud firewalls; open only the ports needed by the service
+- Use SSH tunnels for application access when explicitly requested
+- Verify the public access URL after deployment and document the address and access method in the project's README
+
 ## Large Language Models
 
-- For scenarios involving large language models, use `LLM_DEFAULT` from `D:\personal\codex\.secrets\llm.env` as the default provider selector
+- For work involving large language models, first read `D:\personal\codex\.secrets\README.md` and select the provider and exact API model ID that best fit the project's requirements
+- Prefer the default provider and its default model when they meet the requirements; when another choice is needed, prefer a lower-cost model that meets the required quality, capabilities, and API compatibility
+- After selecting the provider and model, read the required settings from `D:\personal\codex\.secrets\llm.env`; use `LLM_DEFAULT` and `<PROVIDER>_DEFAULT_MODEL` to resolve defaults
+- Keep project-specific selections in the project and preserve centralized defaults unless the user explicitly confirms changing them
+
+### Shared Cloud Model Configuration
+
+- Store shared model configuration on the cloud server in `/home/ubuntu/.config/llm.env`; have each Docker Compose project reference this file through `env_file`
+- Manage this configuration separately from project deployments; preserve the existing file when uploading or updating a project and keep credentials outside source code and container images
+- Load configuration into the container environment when creating the container; running containers retain their existing configuration until explicitly recreated
+- After updating the shared file, apply the changes only to the projects that need them by running `docker compose up -d --no-build --force-recreate <service>` from each project's deployment directory; this recreates the container using the existing image and briefly interrupts the service
+- Use container recreation to refresh environment variables; `docker compose restart` retains the existing environment
+- Preserve explicit project-specific provider and model selections when refreshing shared configuration; projects using shared defaults adopt changed defaults when their containers are recreated
 
 ## Documentation
 
@@ -27,13 +70,16 @@
 
 ## Cloud Server
 
-- Provider: Tencent Cloud Lighthouse
-- Resources: 2 vCPUs, 2 GB RAM, 40 GB system disk
-- Operating system: Ubuntu Server 22.04 LTS 64-bit
-- IPv4: 122.51.135.229
-- IPv6: Disabled
-- Connection method
-  - Username and password
-    - Username: ubuntu
-    - Password: Read `TENCENT_LIGHTHOUSE_01_PASSWORD` from `D:\personal\codex\.secrets\cloud.env`
-  - Terminal connection (SSH): Not configured
+- For work involving a server, first read `D:\personal\codex\.secrets\README.md`, select the server that best fits the project, and prefer the documented default server when suitable
+- Connect to the selected server using the SSH alias, existing key, and host verification procedure documented in that README
+- Use SSH key authentication by default; read or use `D:\personal\codex\.secrets\cloud.env` only when the user explicitly requests it
+- Follow the existing human-confirmation process before modifying the server
+- Design cloud deployments for easy maintenance of files expected to change independently, such as prompts and configuration. Use external files or mounts where appropriate, and document their locations, update procedures, and the reload, restart, or container recreation required to apply changes
+
+### Container Development and Deployment
+
+- Use this default workflow: develop locally, build a Linux container image for the target server architecture, test that image locally, assign a version tag, export and upload the image, then import, configure, and run it on the cloud server
+- Build for `linux/amd64` when targeting the current default server; package the application, runtime, and dependencies in the image and keep the local Windows `.venv` on the development computer
+- Deploy the same image that passed local testing; use the cloud server to import and run the prepared image, with runtime and dependency installation completed during the local image build
+- Keep shared model configuration, credentials, and independently maintained files such as prompts outside the image; apply the documented environment injection or file mounts when starting the container
+- Retain identifiable image versions for rollback and verify container health and the project's core functionality after deployment
