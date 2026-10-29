@@ -4,7 +4,7 @@
 
 - Apply these mappings when the entire user input is the standalone keyword
 - `start` means `inspect this project briefly`
-- `end` means synchronize the current project to Git: inspect its changes, commit the relevant project changes, and push them to the remote repository
+- `end` means synchronize the current project to Git: inspect its changes, commit the relevant project changes, and push them to the remote repository; after synchronization completes, quit local Docker Desktop
 
 ## Local Development Environment
 
@@ -23,8 +23,17 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 | Docker data directory | `D:\Data\DockerData` |
 | Cloud container image target platform | `linux/amd64` |
 
+## Development Defaults
+
+- Develop projects locally by default
+- Use a frontend web page as the default user interface
+- Minimize implementation cost by choosing simple, direct solutions that meet the confirmed requirements
+- Use Spec-Driven Development by default: define requirements and acceptance criteria first, obtain human confirmation before implementation, and verify the result against the specification
+
 ## Project Structure
 
+- Develop new projects on the `main` branch by default and place their directories under `doing/` by default
+- While developing in `doing/`, prepare projects for a later move to `archive/`: use relative paths or runtime path discovery for project files, identify external startup entries that require relocation, and minimize the files that need changes during archiving
 - Name all project directories, including placeholder directories, using `YYYYMMDD_<name>`
 - Each Python project must maintain its own `.venv/` directory and `requirements.txt` file
 - Each project must include a `README.md` describing its purpose, setup, and startup steps
@@ -64,7 +73,8 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 
 - When moving a project from `doing/` to `archive/`, remove temporary files and test files
 - Update the project listings in `doing/README.md` and `archive/README.md`
-- Keep archiving limited to moving the project directory, removing temporary and test files, and updating README listings
+- Preserve the same project functionality and behavior after archiving as before archiving; update path-dependent startup entries and configuration as needed
+- Keep archiving limited to moving the project directory, removing temporary and test files, updating relevant README files, and making the path adaptations necessary to preserve functionality
 - Preserve the existing virtual environment and dependencies during archiving; rebuild them only when a confirmed path issue requires it
 - Verify the destination and README links; run functional checks only when code changes or an observed issue requires them
 
@@ -78,6 +88,7 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 
 ### Container Development and Deployment
 
+- When local Docker is needed, check the engine status first; if it is not running, start Docker Desktop in the background and wait for the engine to become ready before continuing
 - Use this default workflow: develop locally, build a Linux container image for the target server architecture, test that image locally, assign a version tag, export and upload the image, then import, configure, and run it on the cloud server
 - Build for `linux/amd64` when targeting the current default server; package the application, runtime, and dependencies in the image and keep the local Windows `.venv` on the development computer
 - Deploy the same image that passed local testing; use the cloud server to import and run the prepared image, with runtime and dependency installation completed during the local image build

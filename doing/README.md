@@ -6,4 +6,4 @@ This directory contains projects under active development, each in its own subdi
 
 | Directory | Description |
 |---|---|
-| [20261026_placeholder/](20261026_placeholder/README.md) | Placeholder for a future project |
+| [20261025_placeholder/](20261025_placeholder/README.md) | Placeholder for a future project |
