@@ -1,14 +1,10 @@
 # Personal Code
 
-个人代码仓库，用于日常学习和练习。
+Personal code repository for learning and practice.
 
-## 内容
+## Directories
 
-| 目录/文件 | 说明 |
-|---|---|
-| `doing/` | 开发中项目 |
-| `archive/` | 归档项目 |
-
----
-
-> 各子目录均有独立的 README 文件，请进入对应目录查看详情。
+| Directory | Description |
+| --- | --- |
+| [doing/](doing/README.md) | Projects under active development |
+| [archive/](archive/README.md) | Archived projects |
