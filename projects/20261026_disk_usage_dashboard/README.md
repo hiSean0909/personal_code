@@ -2,6 +2,8 @@
 
 A local Windows dashboard showing C/D drive storage usage and live upload/download rates.
 
+See [deliverables](deliverables/README.md) for the available startup or access instructions.
+
 ## Features
 
 - Total, used, and free capacity for C: and D:, with usage bars

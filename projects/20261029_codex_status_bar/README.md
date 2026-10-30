@@ -2,6 +2,8 @@
 
 A planned local Windows tool that displays remaining 5-hour allowance, weekly allowance, and current-conversation context percentage in the center of the Codex desktop application's top bar.
 
+See [deliverables](deliverables/README.md) for the available startup or access instructions.
+
 ## Status
 
 The project is on hold at the user's request. The [specification](spec.md) v1.1, [technical design](design.md) v1.0, and [task plan](tasks.md) v1.0 are confirmed. Runtime discovery and independent allowance reads are verified. Live desktop feasibility remains incomplete: direct startup of the packaged Codex executable failed with `EPERM`, and an alternative launch method requires verification. Ring rendering and continuous monitoring are not implemented yet.

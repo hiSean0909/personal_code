@@ -8,7 +8,7 @@ A small Windows client for the existing Gradio translation assistant. Select tex
 - Access to a Gradio translator exposing `/translate(message: str)`
 - A project-local `.venv` and the dependency in `requirements.txt`
 
-The project is in `D:\personal\git\personal_code\projects\20261028_quick_translator`. Its existing virtual environment and dependencies are preserved. Start it through `start.cmd`, which resolves paths from its own directory. Use the virtual environment's Python executable directly; activation scripts and installed command wrappers can retain their original creation paths. Rebuild the environment only if a verified runtime path issue requires it.
+The project is in `D:\personal\git\personal_code\projects\20261028_quick_translator`. Its existing virtual environment and dependencies are preserved. Start it through `deliverables/start.cmd`, which resolves project paths from its parent directory. Use the virtual environment's Python executable directly; activation scripts and installed command wrappers can retain their original creation paths. Rebuild the environment only if a verified runtime path issue requires it.
 
 Open PowerShell in this project directory:
 
@@ -21,7 +21,7 @@ python -m venv .venv
 
 ## Startup and Use
 
-Double-click `start.cmd` after setup, or run:
+Double-click `deliverables/start.cmd` after setup, or run:
 
 ```powershell
 .\.venv\Scripts\pythonw.exe app.py
@@ -56,10 +56,10 @@ After the directory move on 2026-10-30, the startup shortcut points to `D:\perso
 To install or refresh that shortcut from this project directory:
 
 ```powershell
-.\enable_startup.ps1
+.\deliverables\enable_startup.ps1
 ```
 
-The script targets the Administrator profile explicitly. It checks the Python executable and application paths before creating the shortcut. Remove `QuickTranslator.lnk` from the folder above to disable login startup. After a move, review and update the known shortcut's target, arguments, and working directory: the installer deliberately rejects an existing shortcut pointing to a different executable path. Once those paths match, the installer can refresh the shortcut normally. Manual `start.cmd` launches still show the main window when no instance is already running.
+The script targets the Administrator profile explicitly. It checks the Python executable and application paths before creating the shortcut. Remove `QuickTranslator.lnk` from the folder above to disable login startup. After a move, review and update the known shortcut's target, arguments, and working directory: the installer deliberately rejects an existing shortcut pointing to a different executable path. Once those paths match, the installer can refresh the shortcut normally. Manual `deliverables/start.cmd` launches still show the main window when no instance is already running.
 
 Records are stored in `%LOCALAPPDATA%\QuickTranslator\history.sqlite3` using Python's standard-library SQLite support. They survive restarts. Recapturing the exact same trimmed original updates that entry; matching is case-sensitive. Entries interrupted while pending are marked failed on the next start. Only one translation request is active at a time; clearing while it runs does not open another request slot until it finishes. Capturing remains available during translation. Repeated identical originals keep one record, and older requests cannot overwrite the latest accepted capture. Settings can be saved once capture and translation work is idle.
 
@@ -82,8 +82,8 @@ See [SPEC.md](SPEC.md) for confirmed requirements and acceptance criteria.
 | `app.py` | Main records/detail interface, settings, and background request coordination |
 | `markdown_view.py` | Selectable Tkinter rendering for common Markdown |
 | `history.py` | Transactional local SQLite record storage |
-| `start.cmd` | Double-click launcher using the project's Python environment |
-| `enable_startup.ps1` | Install the Administrator user's login startup shortcut |
+| `deliverables/start.cmd` | Double-click launcher using the project's Python environment |
+| `deliverables/enable_startup.ps1` | Install the Administrator user's login startup shortcut |
 | `startup.py` | Windows session mutex for duplicate-instance prevention |
 | `windows.py` | Windows hotkey registration and clipboard selection capture |
 | `tray.py` | Native Windows notification-area icon, restore menu, and exit cleanup |
@@ -94,7 +94,7 @@ See [SPEC.md](SPEC.md) for confirmed requirements and acceptance criteria.
 
 Center-position correction verified on 2026-10-29: native `GetWindowRect` measurements on a 1280-by-800 primary screen placed the notification center at (640, 399.5), within one pixel of the screen center. First display, repeated display, and a longer message all passed position, visibility, foreground-preservation, and one-second auto-hide checks. The Win32 display function now receives the calculated coordinates directly instead of reading stale positions from a hidden Tk window.
 
-Verified on 2026-10-29: 29 focused checks passed using temporary history databases and simulated remote translations. Coverage includes common Markdown formatting and code literals, horizontal scrolling for wide tables/code, the minimum window size, FIFO translation while further captures are saved, duplicate-result ordering, failures and recovery, clearing queued work and late events, and notification visibility/timer renewal. Native Win32 visibility and foreground-window checks confirmed that the one-second notification appears with a hidden main window and preserves the foreground window. Python source parsing, changed-file whitespace checks, and `pip check` passed. No new dependency was added, no real model request was made, and existing user records were not modified. Full physical shortcut-to-selection interaction remains a manual desktop check. Exit the running tray instance and launch `start.cmd` to load these changes.
+Verified on 2026-10-29: 29 focused checks passed using temporary history databases and simulated remote translations. Coverage includes common Markdown formatting and code literals, horizontal scrolling for wide tables/code, the minimum window size, FIFO translation while further captures are saved, duplicate-result ordering, failures and recovery, clearing queued work and late events, and notification visibility/timer renewal. Native Win32 visibility and foreground-window checks confirmed that the one-second notification appears with a hidden main window and preserves the foreground window. Python source parsing, changed-file whitespace checks, and `pip check` passed. No new dependency was added, no real model request was made, and existing user records were not modified. Full physical shortcut-to-selection interaction remains a manual desktop check. Exit the running tray instance and launch `deliverables/start.cmd` to load these changes.
 
 The development test files and temporary bytecode cache were removed during archiving according to repository policy. The results below record verification completed before archiving. Archive checks focus on relocation, startup paths, preserved dependencies, and access to existing data.
 

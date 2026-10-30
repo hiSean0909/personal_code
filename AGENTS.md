@@ -1,12 +1,6 @@
-# General Conventions
+# Project Types
 
-## Input Mapping
-
-- Apply these mappings when the entire user input is the standalone keyword
-- `start` means `inspect this project briefly`
-- `end` means synchronize the current project to Git: inspect its changes, commit the relevant project changes, and push them to the remote repository; after synchronization completes, quit local Docker Desktop
-
-## Local Development Environment
+## Windows Local Projects
 
 Environment snapshot verified on 2026-10-28. Check the actual environment before compatibility or installation work and prefer reusing existing tools.
 
@@ -22,6 +16,38 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 | Docker installation directory | `D:\software\Docker` |
 | Docker data directory | `D:\Data\DockerData` |
 | Cloud container image target platform | `linux/amd64` |
+
+## Cloud Server Projects
+
+See the Cloud Deployment section for server access and deployment conventions.
+
+## Mobile Applications
+
+- Develop small Android applications for personal use, with compatibility across Android devices where practical
+- Use Android 10 (API 29) as the default minimum supported version; adjust it when project requirements justify a different baseline
+- Use the user's vivo X300 (V2509A, OriginOS 6) as a primary test device
+- Verify the phone's Android version during development
+- Provide an installation package for the user to verify compatibility on the phone; record the user's feedback
+
+
+### Shared Android Development Tools
+
+Environment snapshot verified on 2026-10-30. Check the actual environment before compatibility or installation work and reuse existing tools where practical.
+
+The shared tools are installed under `D:\software\AndroidDev`:
+
+- JDK 17, Gradle 8.13, and the Gradle dependency cache
+- Android SDK command-line tools, Platform 36, Build Tools 35.0.0, and Platform Tools including ADB
+
+Android Studio, the Android Emulator, and emulator system images are not installed.
+
+# General Conventions
+
+## Input Mapping
+
+- Apply these mappings when the entire user input is the standalone keyword
+- `start` means `inspect this project briefly`
+- `end` means synchronize the current project to Git: inspect its changes, commit the relevant project changes, and push them to the remote repository; after synchronization completes, quit local Docker Desktop
 
 ## Development Defaults
 
@@ -79,6 +105,8 @@ Produce and present the deliverables for one selected stage at a time. Wait for 
 - Name all project directories, including placeholder directories, using `YYYYMMDD_<name>`
 - Each Python project must maintain its own `.venv/` directory and `requirements.txt` file
 - Each project must include a `README.md` describing its purpose, setup, and startup steps
+- Use a `deliverables/` directory in each project for the key files and startup instructions needed to use or run the project
+- Include applicable deliverables such as APKs, executable files, and startup scripts; keep intermediate build files and other process files outside this directory
 
 ## Documentation
 

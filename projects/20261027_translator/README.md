@@ -2,6 +2,8 @@
 
 An English/Chinese translation and vocabulary assistant with Gradio Web and CLI interfaces. It reuses the original prompt from `20260626_translator_agent` and includes Docker deployment files.
 
+See [deliverables](deliverables/README.md) for the available startup or access instructions.
+
 ## Features
 
 - English words: Chinese meaning, American pronunciation, etymology, meaning evolution, and related vocabulary

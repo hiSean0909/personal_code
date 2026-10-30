@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$taskProject = $PSScriptRoot
+$taskProject = Split-Path -Parent $PSScriptRoot
 $taskPython = Join-Path $taskProject '.venv\Scripts\pythonw.exe'
 $taskApp = Join-Path $taskProject 'app.py'
 $taskStartup = 'C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
