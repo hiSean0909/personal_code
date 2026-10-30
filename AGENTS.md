@@ -30,6 +30,13 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 - Minimize implementation cost by choosing simple, direct solutions that meet the confirmed requirements
 - Use the Spec-Driven Development workflow below for new projects and subsequent iterations
 
+## Database Selection
+
+- For local projects, prefer a database on the local computer; consider a server database when data must be shared across devices
+- For cloud projects, prefer SQLite when it meets the requirements; consider the existing MySQL service when concurrent writes, shared access, or other needs make SQLite unsuitable
+- Access remote data through a server application or a client/server database; avoid directly accessing SQLite files over a network share
+- Persist cloud SQLite files outside disposable containers and arrange backups for persistent data according to its importance
+
 ## Spec-Driven Development Workflow
 
 ### Stages and Deliverables
@@ -67,8 +74,8 @@ Produce and present the deliverables for one selected stage at a time. Wait for 
 
 ## Project Structure
 
-- Develop new projects on the `main` branch by default and place their directories under `doing/` by default
-- Prepare projects for moves between status directories: use relative paths or runtime path discovery and identify external startup entries that require relocation
+- Develop new projects on the `main` branch by default and place their directories under `projects/`
+- Keep project directories stable when their status changes; use relative paths or runtime path discovery where practical
 - Name all project directories, including placeholder directories, using `YYYYMMDD_<name>`
 - Each Python project must maintain its own `.venv/` directory and `requirements.txt` file
 - Each project must include a `README.md` describing its purpose, setup, and startup steps
@@ -76,31 +83,29 @@ Produce and present the deliverables for one selected stage at a time. Wait for 
 ## Documentation
 
 - Write all deliverables in English, including specifications, designs, task plans, README files, code comments, user-facing text, configuration examples, and verification or delivery reports
-- At every directory level, index README files must describe only the immediate subdirectories, using links and brief descriptions
+- Use the root README to index projects with links, brief descriptions, and statuses
 - Keep project features, setup, and startup instructions in each project's own README
 - When project functionality, setup, or startup steps change, update the project's README and relevant parent-directory README entries
 
 # Project Status Management
 
-## Status Directories
+## Project Statuses
 
-- `doing/` contains projects under active development
-- `hold/` contains projects temporarily suspended, with their work and context preserved for a possible restart
-- `done/` contains completed projects
+- `doing` identifies projects under active development
+- `hold` identifies projects temporarily suspended, with their work and context preserved for a possible restart
+- `done` identifies projects whose current version is complete
 
 ## Status Transitions
 
-- Start new projects in `doing/`; move suspended projects from `doing/` to `hold/` after user confirmation
-- Move a resumed project from `hold/` to `doing/` after user confirmation, then review its existing specification and remaining work
-- Move a completed project from `doing/` to `done/` after user confirmation; move a completed project back to `doing/` when a confirmed iteration begins
+- Start new projects with `doing` status; change suspended projects to `hold` after user confirmation
+- Change a resumed project from `hold` to `doing` after user confirmation, then review its existing specification and remaining work
+- Change a completed project to `done` after user confirmation; change it back to `doing` when a confirmed iteration begins
 - Confirm the intended status with the user before any other transition
 
-## Moving Projects
+## Updating Project Status
 
-- Update the source and destination directory indexes and preserve project files, dependencies, and progress when placing a project on hold
-- When moving a completed project to `done/`, remove temporary files and test files; preserve its functionality, virtual environment, and dependencies
-- Identify and update path-dependent startup entries and configuration when needed; rebuild dependencies only for a confirmed path issue
-- Verify destinations and README links; run functional checks when code changes or an observed issue requires them
+- Update the root project index and preserve project files, dependencies, and progress when changing status
+- On completion, remove temporary files and test files; preserve functionality, virtual environments, and dependencies
 
 # Large Language Models
 
