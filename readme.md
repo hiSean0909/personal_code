@@ -11,3 +11,4 @@ Personal code repository for learning and practice. Projects have stable directo
 | [20261028_quick_translator](projects/20261028_quick_translator/README.md) | Windows local | done | Windows tray client for selected-text translation |
 | [20261029_codex_status_bar](projects/20261029_codex_status_bar/README.md) | Windows local | hold | Codex status display paused during feasibility checks |
 | [20261030_android_calculator](projects/20261030_android_calculator/README.md) | Android mobile | done | Android calculator for basic arithmetic |
+| [20261031_toolbox](projects/20261031_toolbox/README.md) | Android mobile | done | Magic Box: offline tools and games |

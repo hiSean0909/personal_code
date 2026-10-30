@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.personal.toolbox'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.personal.toolbox'
+        minSdk 29
+        targetSdk 36
+        versionCode 3
+        versionName '1.2'
+    }
+}
