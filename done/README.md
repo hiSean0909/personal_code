@@ -1,6 +1,6 @@
-# Archived Projects
+# Completed Projects
 
-This directory contains archived projects, each in its own subdirectory.
+This directory contains completed projects, each in its own subdirectory.
 
 ## Projects
 

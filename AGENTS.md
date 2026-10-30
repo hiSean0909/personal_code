@@ -28,31 +28,79 @@ Environment snapshot verified on 2026-10-28. Check the actual environment before
 - Develop projects locally by default
 - Use a frontend web page as the default user interface
 - Minimize implementation cost by choosing simple, direct solutions that meet the confirmed requirements
-- Use Spec-Driven Development by default: define requirements and acceptance criteria first, obtain human confirmation before implementation, and verify the result against the specification
+- Use the Spec-Driven Development workflow below for new projects and subsequent iterations
+
+## Spec-Driven Development Workflow
+
+### Stages and Deliverables
+
+Select all or a subset of the six stages according to the project's actual complexity and the user's instructions. By default, use only two steps: produce and confirm `spec.md`, then implement the code with relevant verification and documentation. Add separate technical design, task planning, acceptance, or delivery stages when the project needs them or the user explicitly requests them. State the selected workflow and its rationale before proceeding.
+
+Produce and present the deliverables for one selected stage at a time. Wait for explicit human confirmation before entering the next selected stage. Approval to create or revise a document authorizes only that document change; implementation requires confirmation of the specification and explicit development authorization, plus confirmation of any additional pre-implementation stages selected for the project.
+
+| Stage | Purpose | Deliverables | Completion Gate |
+| --- | --- | --- | --- |
+| 1. Requirements | Define the problem, intended behavior, scope, and success criteria | `spec.md` containing goals, scope, scenarios, functional behavior, constraints, acceptance criteria, and open questions | User confirms the requirements version and authorizes the next selected stage |
+| 2. Technical Design | Determine how to satisfy the confirmed requirements | `design.md` containing the technical approach, module responsibilities, data flow, interfaces, key decisions, feasibility findings, and verification strategy | User confirms the design and authorizes the next selected stage |
+| 3. Task Planning | Define implementation order and reviewable outcomes | `tasks.md` containing tasks, dependencies, expected outcomes, verification methods, and completion status | User confirms the implementation scope and explicitly authorizes development |
+| 4. Implementation | Build the confirmed scope | Source code, necessary tests, configuration examples, and synchronized documentation | Relevant checks pass and the user confirms completion or authorizes the next selected stage |
+| 5. Acceptance | Verify the implementation against the confirmed specification | Acceptance results with evidence for each criterion, outstanding items, and known limitations | User confirms acceptance and authorizes the next selected stage or completion |
+| 6. Delivery and Feedback | Make the result usable and maintainable in its target environment | A runnable version or release package, `README.md`, and applicable installation, operation, update, and rollback instructions | Target-environment verification passes and the user confirms delivery |
+
+### Document Responsibilities and Review
+
+- Use `AGENTS.md` for stable development rules and `spec.md` for project-specific requirements and acceptance criteria
+- Use `spec.md` to describe expected behavior and user-specified constraints; use `design.md` to describe implementation choices; use `tasks.md` to track implementation work
+- For a new project, create and review `spec.md` first; iterate on it until the user explicitly confirms the requirements version before entering the next selected stage
+- Summarize proposed document changes and obtain human confirmation before writing them; after writing, present the actual deliverable for review
+- Keep unresolved questions and unverified assumptions explicit; resolve decisions needed by the next stage before requesting transition approval
+- Scale documentation to project complexity; in the default two-step workflow, include necessary implementation notes in `spec.md` and keep verification and delivery within implementation; create separate documents only for selected stages that need them
+- Treat each confirmation as approval of the stated content and next action; complete work within that authorization and obtain confirmation before expanding its scope
+
+### Iterations and Changes During Development
+
+- For a feature iteration or a change to expected behavior, first identify the affected `spec.md` sections, proposed changes, reasons, and impact; obtain confirmation before updating the specification
+- Present the revised specification for confirmation, then update and review any affected design or task documents included in the selected workflow before requesting development authorization
+- If investigation or implementation reveals an infeasible requirement or a conflicting constraint, return to the affected requirements or design stage and obtain confirmation of the revised deliverable before continuing dependent work
+- For a defect where the implementation deviates from the confirmed specification, explain the root cause and proposed fix, obtain confirmation before modifying the implementation, and verify against the existing acceptance criteria; revise the specification when expected behavior changes
+- Keep all selected deliverables consistent; verify against the confirmed requirements version even when acceptance and delivery are included within implementation
 
 ## Project Structure
 
 - Develop new projects on the `main` branch by default and place their directories under `doing/` by default
-- While developing in `doing/`, prepare projects for a later move to `archive/`: use relative paths or runtime path discovery for project files, identify external startup entries that require relocation, and minimize the files that need changes during archiving
+- Prepare projects for moves between status directories: use relative paths or runtime path discovery and identify external startup entries that require relocation
 - Name all project directories, including placeholder directories, using `YYYYMMDD_<name>`
 - Each Python project must maintain its own `.venv/` directory and `requirements.txt` file
 - Each project must include a `README.md` describing its purpose, setup, and startup steps
 
 ## Documentation
 
-- Write all README files in English
+- Write all deliverables in English, including specifications, designs, task plans, README files, code comments, user-facing text, configuration examples, and verification or delivery reports
 - At every directory level, index README files must describe only the immediate subdirectories, using links and brief descriptions
 - Keep project features, setup, and startup instructions in each project's own README
 - When project functionality, setup, or startup steps change, update the project's README and relevant parent-directory README entries
 
-## Project Archive
+# Project Status Management
 
-- When moving a project from `doing/` to `archive/`, remove temporary files and test files
-- Update the project listings in `doing/README.md` and `archive/README.md`
-- Preserve the same project functionality and behavior after archiving as before archiving; update path-dependent startup entries and configuration as needed
-- Keep archiving limited to moving the project directory, removing temporary and test files, updating relevant README files, and making the path adaptations necessary to preserve functionality
-- Preserve the existing virtual environment and dependencies during archiving; rebuild them only when a confirmed path issue requires it
-- Verify the destination and README links; run functional checks only when code changes or an observed issue requires them
+## Status Directories
+
+- `doing/` contains projects under active development
+- `hold/` contains projects temporarily suspended, with their work and context preserved for a possible restart
+- `done/` contains completed projects
+
+## Status Transitions
+
+- Start new projects in `doing/`; move suspended projects from `doing/` to `hold/` after user confirmation
+- Move a resumed project from `hold/` to `doing/` after user confirmation, then review its existing specification and remaining work
+- Move a completed project from `doing/` to `done/` after user confirmation; move a completed project back to `doing/` when a confirmed iteration begins
+- Confirm the intended status with the user before any other transition
+
+## Moving Projects
+
+- Update the source and destination directory indexes and preserve project files, dependencies, and progress when placing a project on hold
+- When moving a completed project to `done/`, remove temporary files and test files; preserve its functionality, virtual environment, and dependencies
+- Identify and update path-dependent startup entries and configuration when needed; rebuild dependencies only for a confirmed path issue
+- Verify destinations and README links; run functional checks when code changes or an observed issue requires them
 
 # Large Language Models
 

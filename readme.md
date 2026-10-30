@@ -7,4 +7,5 @@ Personal code repository for learning and practice.
 | Directory | Description |
 | --- | --- |
 | [doing/](doing/README.md) | Projects under active development |
-| [archive/](archive/README.md) | Archived projects |
+| [done/](done/README.md) | Completed projects |
+| [hold/](hold/README.md) | Projects temporarily on hold |

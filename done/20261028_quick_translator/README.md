@@ -8,7 +8,7 @@ A small Windows client for the existing Gradio translation assistant. Select tex
 - Access to a Gradio translator exposing `/translate(message: str)`
 - A project-local `.venv` and the dependency in `requirements.txt`
 
-The project is archived at `D:\personal\git\personal_code\archive\20261028_quick_translator`. Its existing virtual environment and dependencies are preserved. Start it through `start.cmd`, which resolves paths from its own directory. Use the virtual environment's Python executable directly; activation scripts and installed command wrappers can retain their original creation paths. Rebuild the environment only if a verified runtime path issue requires it.
+The project is in `D:\personal\git\personal_code\done\20261028_quick_translator`. Its existing virtual environment and dependencies are preserved. Start it through `start.cmd`, which resolves paths from its own directory. Use the virtual environment's Python executable directly; activation scripts and installed command wrappers can retain their original creation paths. Rebuild the environment only if a verified runtime path issue requires it.
 
 Open PowerShell in this project directory:
 
@@ -51,7 +51,7 @@ C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Sta
 
 The shortcut runs this project's `.venv\Scripts\pythonw.exe` with the absolute `app.py` path and `--background`. It starts after Administrator logs in, with no console or main window; use the tray icon to open the main interface. A tray initialization failure restores the main window so the application stays accessible. This is a user login startup entry and uses the user's normal execution privileges.
 
-Updated and verified during archiving on 2026-10-28: the startup shortcut points to `D:\personal\git\personal_code\archive\20261028_quick_translator\.venv\Scripts\pythonw.exe`, with the archived project's absolute `app.py` path and `--background`, and uses the archived project directory as its working directory. Actual sign-out/sign-in startup remains to be observed; no reboot or sign-out was performed during setup or archiving.
+After the directory move on 2026-10-30, the startup shortcut points to `D:\personal\git\personal_code\done\20261028_quick_translator\.venv\Scripts\pythonw.exe`, with the project's absolute `app.py` path and `--background`, and uses the project directory as its working directory. The shortcut properties were verified; actual sign-out/sign-in startup remains to be observed.
 
 To install or refresh that shortcut from this project directory:
 
